@@ -1,1 +1,27 @@
+name: Push file from Claude
 
+on:
+  repository_dispatch:
+    types: [push-file]
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write and commit file
+        env:
+          FILE_PATH: ${{ github.event.client_payload.path }}
+          FILE_CONTENT: ${{ github.event.client_payload.content }}
+          COMMIT_MSG: ${{ github.event.client_payload.message }}
+        run: |
+          mkdir -p "$(dirname "$FILE_PATH")"
+          printf '%s' "$FILE_CONTENT" | base64 -d > "$FILE_PATH"
+          git config user.name "claude-bot"
+          git config user.email "claude@bot.dev"
+          git add .
+          git diff --staged --quiet || git commit -m "$COMMIT_MSG"
+          git push
