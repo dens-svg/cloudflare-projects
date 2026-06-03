@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Wow Animations</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;min-height:100vh;overflow-x:hidden;font-family:'Segoe UI',sans-serif;color:#fff}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.ui{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:2rem;padding:2rem}
+h1{font-size:clamp(2rem,6vw,4rem);font-weight:700;letter-spacing:-0.02em;text-align:center;background:linear-gradient(135deg,#a78bfa,#ec4899,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.subtitle{font-size:1rem;color:rgba(255,255,255,0.4);letter-spacing:0.15em;text-transform:uppercase}
+.btn-row{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+button{padding:0.75rem 1.75rem;border:none;border-radius:50px;font-size:0.9rem;font-weight:600;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;letter-spacing:0.05em}
+button:active{transform:scale(0.96)}
+.btn-particles{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;box-shadow:0 0 30px #7c3aed66}
+.btn-particles:hover{box-shadow:0 0 50px #7c3aedaa}
+.btn-ripple{background:linear-gradient(135deg,#0ea5e9,#22d3ee);color:#fff;box-shadow:0 0 30px #0ea5e966}
+.btn-ripple:hover{box-shadow:0 0 50px #0ea5e9aa}
+.btn-firework{background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;box-shadow:0 0 30px #f9731666}
+.btn-firework:hover{box-shadow:0 0 50px #f97316aa}
+.btn-matrix{background:linear-gradient(135deg,#10b981,#34d399);color:#fff;box-shadow:0 0 30px #10b98166}
+.btn-matrix:hover{box-shadow:0 0 50px #10b981aa}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;width:100%;max-width:600px}
+.card{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:16px;padding:1.5rem;text-align:center;transition:transform 0.3s,box-shadow 0.3s;cursor:pointer}
+.card:hover{transform:translateY(-8px) scale(1.04);box-shadow:0 20px 60px rgba(168,85,247,0.3)}
+.card-icon{font-size:2rem;margin-bottom:0.5rem}
+.card-label{font-size:0.8rem;color:rgba(255,255,255,0.5)}
+.ripple-container{position:fixed;top:0;left:0;pointer-events:none;z-index:5}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="ripple-container" id="rippleContainer"></div>
+<div class="ui">
+  <p class="subtitle">✦ expérience interactive</p>
+  <h1>Animations<br>Wahou ✨</h1>
+  <div class="btn-row">
+    <button class="btn-particles" onclick="burstParticles()">Particules</button>
+    <button class="btn-ripple" onclick="toggleRipple()">Ripple</button>
+    <button class="btn-firework" onclick="firework()">Feux d'artifice</button>
+    <button class="btn-matrix" onclick="toggleMatrix()">Matrix</button>
+  </div>
+  <div class="card-grid">
+    <div class="card" onclick="cardPop(this)"><div class="card-icon">🌊</div><div class="card-label">Vagues</div></div>
+    <div class="card" onclick="cardPop(this)"><div class="card-icon">⚡</div><div class="card-label">Énergie</div></div>
+    <div class="card" onclick="cardPop(this)"><div class="card-icon">🌀</div><div class="card-label">Spirale</div></div>
+    <div class="card" onclick="cardPop(this)"><div class="card-icon">🔮</div><div class="card-label">Magie</div></div>
+  </div>
+</div>
+<script>
+const canvas = document.getElementById('bg');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [], mode = 'stars', matrixOn = false, rippleOn = false;
+let matrixCols = [], matrixDrops = [], matrixInterval;
+
+function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;initStars()}
+window.addEventListener('resize',resize);
+
+function initStars(){
+  particles=[];
+  for(let i=0;i<120;i++){
+    particles.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5+0.3,vx:(Math.random()-0.5)*0.2,vy:(Math.random()-0.5)*0.2,alpha:Math.random()*0.6+0.2,hue:Math.random()*60+260})
+  }
+}
+
+function drawStars(){
+  ctx.clearRect(0,0,W,H);
+  particles.forEach(p=>{
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`hsla(${p.hue},80%,80%,${p.alpha})`;ctx.fill();
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+    p.alpha+=Math.sin(Date.now()*0.001+p.x)*0.005;
+    p.alpha=Math.max(0.05,Math.min(0.9,p.alpha));
+  });
+}
+
+let burstParticlesArr=[];
+function burstParticles(){
+  const cx=W/2,cy=H/2;
+  for(let i=0;i<80;i++){
+    const angle=Math.random()*Math.PI*2,speed=Math.random()*8+2;
+    burstParticlesArr.push({x:cx,y:cy,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:1,r:Math.random()*4+2,hue:Math.random()*360});
+  }
+}
+
+function drawBurst(){
+  burstParticlesArr=burstParticlesArr.filter(p=>p.life>0.01);
+  burstParticlesArr.forEach(p=>{
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2);
+    ctx.fillStyle=`hsla(${p.hue},100%,65%,${p.life})`;ctx.fill();
+    p.x+=p.vx;p.y+=p.vy;p.vy+=0.15;p.life*=0.94;
+  });
+}
+
+let fwArr=[];
+function firework(){
+  const x=Math.random()*W*0.6+W*0.2, y=Math.random()*H*0.4+H*0.05;
+  for(let i=0;i<60;i++){
+    const angle=Math.random()*Math.PI*2,speed=Math.random()*6+1;
+    fwArr.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:1,r:Math.random()*3+1,hue:Math.random()*360,trail:[]});
+  }
+}
+function drawFireworks(){
+  fwArr=fwArr.filter(p=>p.life>0.01);
+  fwArr.forEach(p=>{
+    p.trail.push({x:p.x,y:p.y});
+    if(p.trail.length>8)p.trail.shift();
+    p.trail.forEach((t,i)=>{
+      ctx.beginPath();ctx.arc(t.x,t.y,p.r*(i/p.trail.length)*p.life,0,Math.PI*2);
+      ctx.fillStyle=`hsla(${p.hue},100%,65%,${(i/p.trail.length)*p.life*0.5})`;ctx.fill();
+    });
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2);
+    ctx.fillStyle=`hsla(${p.hue},100%,75%,${p.life})`;ctx.fill();
+    p.x+=p.vx;p.y+=p.vy;p.vy+=0.08;p.vx*=0.98;p.life*=0.96;
+  });
+}
+
+function toggleMatrix(){
+  matrixOn=!matrixOn;
+  if(matrixOn){
+    const cols=Math.floor(W/16);
+    matrixDrops=Array(cols).fill(1);
+  }
+}
+function drawMatrix(){
+  if(!matrixOn)return;
+  ctx.fillStyle='rgba(0,0,0,0.04)';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#0f6';ctx.font='14px monospace';
+  const cols=Math.floor(W/16);
+  for(let i=0;i<cols;i++){
+    const char=String.fromCharCode(0x30A0+Math.random()*96);
+    ctx.fillStyle=`rgba(0,${Math.floor(Math.random()*100+155)},70,0.85)`;
+    ctx.fillText(char,i*16,matrixDrops[i]*16);
+    if(matrixDrops[i]*16>H&&Math.random()>0.975)matrixDrops[i]=0;
+    matrixDrops[i]++;
+  }
+}
+
+function toggleRipple(){
+  rippleOn=!rippleOn;
+}
+document.addEventListener('mousemove',e=>{
+  if(!rippleOn)return;
+  const el=document.createElement('div');
+  el.style.cssText=`position:fixed;left:${e.clientX}px;top:${e.clientY}px;width:4px;height:4px;background:rgba(14,165,233,0.9);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);animation:rippleAnim 0.8s ease-out forwards;`;
+  document.getElementById('rippleContainer').appendChild(el);
+  setTimeout(()=>el.remove(),800);
+});
+const style=document.createElement('style');
+style.textContent=`@keyframes rippleAnim{0%{width:4px;height:4px;opacity:1}100%{width:80px;height:80px;opacity:0;margin-left:-38px;margin-top:-38px}}`;
+document.head.appendChild(style);
+
+function cardPop(el){
+  el.style.transition='transform 0.1s';
+  el.style.transform='scale(1.2) rotate(5deg)';
+  setTimeout(()=>{el.style.transform='';el.style.transition='transform 0.5s cubic-bezier(.34,1.56,.64,1)';},150);
+  firework();
+}
+
+function loop(){
+  if(!matrixOn){
+    ctx.clearRect(0,0,W,H);
+    drawStars();
+  } else {
+    drawMatrix();
+  }
+  drawBurst();
+  drawFireworks();
+  requestAnimationFrame(loop);
+}
+
+resize();
+loop();
+</script>
+</body>
+</html>
