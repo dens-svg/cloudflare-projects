@@ -3,176 +3,129 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Wow Animations</title>
+<title>Wahou Animations</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0f;min-height:100vh;overflow-x:hidden;font-family:'Segoe UI',sans-serif;color:#fff}
-canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
-.ui{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:2rem;padding:2rem}
-h1{font-size:clamp(2rem,6vw,4rem);font-weight:700;letter-spacing:-0.02em;text-align:center;background:linear-gradient(135deg,#a78bfa,#ec4899,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.subtitle{font-size:1rem;color:rgba(255,255,255,0.4);letter-spacing:0.15em;text-transform:uppercase}
-.btn-row{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
-button{padding:0.75rem 1.75rem;border:none;border-radius:50px;font-size:0.9rem;font-weight:600;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;letter-spacing:0.05em}
-button:active{transform:scale(0.96)}
-.btn-particles{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;box-shadow:0 0 30px #7c3aed66}
-.btn-particles:hover{box-shadow:0 0 50px #7c3aedaa}
-.btn-ripple{background:linear-gradient(135deg,#0ea5e9,#22d3ee);color:#fff;box-shadow:0 0 30px #0ea5e966}
-.btn-ripple:hover{box-shadow:0 0 50px #0ea5e9aa}
-.btn-firework{background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;box-shadow:0 0 30px #f9731666}
-.btn-firework:hover{box-shadow:0 0 50px #f97316aa}
-.btn-matrix{background:linear-gradient(135deg,#10b981,#34d399);color:#fff;box-shadow:0 0 30px #10b98166}
-.btn-matrix:hover{box-shadow:0 0 50px #10b981aa}
-.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;width:100%;max-width:600px}
-.card{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:16px;padding:1.5rem;text-align:center;transition:transform 0.3s,box-shadow 0.3s;cursor:pointer}
-.card:hover{transform:translateY(-8px) scale(1.04);box-shadow:0 20px 60px rgba(168,85,247,0.3)}
-.card-icon{font-size:2rem;margin-bottom:0.5rem}
-.card-label{font-size:0.8rem;color:rgba(255,255,255,0.5)}
-.ripple-container{position:fixed;top:0;left:0;pointer-events:none;z-index:5}
+body{background:#050510;overflow:hidden;font-family:'Segoe UI',sans-serif;color:#fff;height:100vh;width:100vw}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%}
+#ui{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;z-index:10}
+button{padding:.55rem 1.3rem;border:.5px solid rgba(255,255,255,.15);border-radius:50px;background:rgba(255,255,255,.07);color:#fff;font-size:.78rem;font-weight:600;cursor:pointer;letter-spacing:.07em;backdrop-filter:blur(10px);transition:all .2s}
+button:hover{background:rgba(255,255,255,.15);transform:translateY(-2px);border-color:rgba(255,255,255,.3)}
+button.on{background:rgba(168,85,247,.4);border-color:#a855f7;box-shadow:0 0 20px #a855f755}
+#title{position:fixed;top:2rem;left:50%;transform:translateX(-50%);text-align:center;z-index:10;pointer-events:none;white-space:nowrap}
+#title h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:800;letter-spacing:-.03em;background:linear-gradient(135deg,#a78bfa,#f472b6,#fb923c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+#title p{font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.2em;text-transform:uppercase;margin-top:.3rem}
 </style>
 </head>
 <body>
-<canvas id="bg"></canvas>
-<div class="ripple-container" id="rippleContainer"></div>
-<div class="ui">
-  <p class="subtitle">✦ expérience interactive</p>
-  <h1>Animations<br>Wahou ✨</h1>
-  <div class="btn-row">
-    <button class="btn-particles" onclick="burstParticles()">Particules</button>
-    <button class="btn-ripple" onclick="toggleRipple()">Ripple</button>
-    <button class="btn-firework" onclick="firework()">Feux d'artifice</button>
-    <button class="btn-matrix" onclick="toggleMatrix()">Matrix</button>
-  </div>
-  <div class="card-grid">
-    <div class="card" onclick="cardPop(this)"><div class="card-icon">🌊</div><div class="card-label">Vagues</div></div>
-    <div class="card" onclick="cardPop(this)"><div class="card-icon">⚡</div><div class="card-label">Énergie</div></div>
-    <div class="card" onclick="cardPop(this)"><div class="card-icon">🌀</div><div class="card-label">Spirale</div></div>
-    <div class="card" onclick="cardPop(this)"><div class="card-icon">🔮</div><div class="card-label">Magie</div></div>
-  </div>
+<canvas id="c"></canvas>
+<div id="title"><h1>WAHOU ✦</h1><p>bougez &mdash; cliquez &mdash; explorez</p></div>
+<div id="ui">
+  <button class="on" onclick="go('hyper',this)">Hyperspace</button>
+  <button onclick="go('dna',this)">ADN</button>
+  <button onclick="go('galaxy',this)">Galaxie</button>
+  <button onclick="go('bolt',this)">Foudre</button>
+  <button onclick="go('fluid',this)">Fluide</button>
 </div>
 <script>
-const canvas = document.getElementById('bg');
-const ctx = canvas.getContext('2d');
-let W, H, particles = [], mode = 'stars', matrixOn = false, rippleOn = false;
-let matrixCols = [], matrixDrops = [], matrixInterval;
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+let W,H,frame=0,mode='hyper',mx,my,lastClick=null;
+function rsz(){W=cv.width=innerWidth;H=cv.height=innerHeight;mx=W/2;my=H/2}
+window.addEventListener('resize',rsz);rsz();
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+document.addEventListener('click',e=>{lastClick={x:e.clientX,y:e.clientY,f:frame}});
+window.go=function(m,btn){mode=m;frame=0;document.querySelectorAll('button').forEach(b=>b.classList.remove('on'));btn.classList.add('on')};
 
-function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;initStars()}
-window.addEventListener('resize',resize);
-
-function initStars(){
-  particles=[];
-  for(let i=0;i<120;i++){
-    particles.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5+0.3,vx:(Math.random()-0.5)*0.2,vy:(Math.random()-0.5)*0.2,alpha:Math.random()*0.6+0.2,hue:Math.random()*60+260})
+const stars=Array.from({length:300},()=>ns({}));
+function ns(s){s.x=(Math.random()-.5)*2;s.y=(Math.random()-.5)*2;s.z=Math.random();s.pz=s.z;s.h=Math.random()*60+200;return s}
+function drawHyper(){
+  ctx.fillStyle='rgba(5,5,16,.18)';ctx.fillRect(0,0,W,H);
+  const ox=W/2+(mx-W/2)*.08,oy=H/2+(my-H/2)*.08;
+  stars.forEach(s=>{
+    s.pz=s.z;s.z-=.009;if(s.z<=0)ns(s);
+    const sx=(s.x/s.z)*W*.5+ox,sy=(s.y/s.z)*H*.5+oy;
+    const px=(s.x/s.pz)*W*.5+ox,py=(s.y/s.pz)*H*.5+oy;
+    const al=Math.min(1,(1-s.z)*1.8),sw=Math.max(0,(1-s.z)*3.5);
+    ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(sx,sy);
+    ctx.strokeStyle=`hsla(${s.h},100%,85%,${al})`;ctx.lineWidth=sw;ctx.stroke();
+  });
+  if(lastClick&&frame-lastClick.f<50){
+    const p=1-(frame-lastClick.f)/50;
+    for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(lastClick.x,lastClick.y,(80+i*40)*(1-p),0,Math.PI*2);ctx.strokeStyle=`rgba(168,85,247,${p*.6})`;ctx.lineWidth=2*p;ctx.stroke()}
   }
 }
 
-function drawStars(){
-  ctx.clearRect(0,0,W,H);
-  particles.forEach(p=>{
-    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fillStyle=`hsla(${p.hue},80%,80%,${p.alpha})`;ctx.fill();
+function drawDNA(){
+  ctx.fillStyle='rgba(5,5,16,.1)';ctx.fillRect(0,0,W,H);
+  const t=frame*.025,cw=W/2,rows=Math.floor(H/13);
+  for(let k=0;k<2;k++){
+    const off=k*Math.PI;
+    for(let i=0;i<rows;i++){
+      const y=i*(H/rows),angle=t+i*.28+off,x=cw+Math.sin(angle)*110;
+      const z=Math.cos(angle),al=(z+1)/2*.9+.1,sz=(z+1)/2*5+2,hue=k===0?260:320;
+      ctx.beginPath();ctx.arc(x,y,sz,0,Math.PI*2);ctx.fillStyle=`hsla(${hue},90%,75%,${al})`;ctx.fill();
+      ctx.beginPath();ctx.arc(x,y,sz*3,0,Math.PI*2);ctx.fillStyle=`hsla(${hue},90%,75%,${al*.1})`;ctx.fill();
+    }
+  }
+  for(let i=0;i<rows;i++){
+    const y=i*(H/rows),angle=t+i*.28,x1=cw+Math.sin(angle)*110,x2=cw-Math.sin(angle)*110;
+    ctx.beginPath();ctx.moveTo(x1,y);ctx.lineTo(x2,y);
+    ctx.strokeStyle=`rgba(150,200,255,${.06+Math.abs(Math.cos(angle))*.2})`;ctx.lineWidth=1;ctx.stroke();
+  }
+}
+
+const gps=Array.from({length:800},(_,i)=>{
+  const arm=i%3,ar=(arm/3)*Math.PI*2,r=15+Math.random()*220;
+  return{r,angle:ar+r*.013+(Math.random()*1.2-.6),spd:(.00015+Math.random()*.0001)*(Math.random()>.5?1:-1),h:arm===0?260:arm===1?200:320,sz:Math.random()*2+.4,al:Math.random()*.7+.3};
+});
+function drawGalaxy(){
+  ctx.fillStyle='rgba(5,5,16,.05)';ctx.fillRect(0,0,W,H);
+  const ox=W/2,oy=H/2;
+  gps.forEach(s=>{s.angle+=s.spd;const x=ox+Math.cos(s.angle)*s.r,y=oy+Math.sin(s.angle)*s.r*.45;ctx.beginPath();ctx.arc(x,y,s.sz,0,Math.PI*2);ctx.fillStyle=`hsla(${s.h},80%,80%,${s.al})`;ctx.fill()});
+  const g=ctx.createRadialGradient(ox,oy,0,ox,oy,70);g.addColorStop(0,'rgba(255,210,130,.3)');g.addColorStop(1,'transparent');ctx.fillStyle=g;ctx.fillRect(ox-70,oy-70,140,140);
+}
+
+let bolts=[],lastBolt=0;
+function mkBolt(x1,y1,x2,y2,d){
+  if(d<=0)return[];
+  const len=Math.hypot(x2-x1,y2-y1),bx=(x1+x2)/2+(Math.random()-.5)*len*.5,by=(y1+y2)/2+(Math.random()-.5)*len*.4;
+  const res=[{x1,y1,x2:bx,y2:by},{x1:bx,y1:by,x2,y2}];
+  if(d>1){res.push(...mkBolt(x1,y1,bx,by,d-1),...mkBolt(bx,by,x2,y2,d-1))}
+  if(Math.random()<.3&&d>2)res.push(...mkBolt(bx,by,bx+(Math.random()-.5)*90,by+Math.random()*80,d-2));
+  return res;
+}
+function drawBolt(){
+  ctx.fillStyle='rgba(5,5,16,.28)';ctx.fillRect(0,0,W,H);
+  if(frame-lastBolt>25){lastBolt=frame;const bx=Math.random()*W;bolts=[{s:mkBolt(bx,0,bx+(Math.random()-.5)*200,H,6),l:1}]}
+  if(lastClick&&frame-lastClick.f<3){bolts.push({s:mkBolt(lastClick.x,0,lastClick.x+(Math.random()-.5)*150,H,7),l:1});lastClick=null}
+  bolts.forEach(b=>{
+    b.s.forEach(seg=>{
+      ctx.beginPath();ctx.moveTo(seg.x1,seg.y1);ctx.lineTo(seg.x2,seg.y2);
+      ctx.strokeStyle=`rgba(200,180,255,${b.l*.85})`;ctx.lineWidth=b.l*3;ctx.stroke();
+      ctx.strokeStyle=`rgba(255,255,255,${b.l*.5})`;ctx.lineWidth=b.l;ctx.stroke();
+    });b.l*=.82;
+  });bolts=bolts.filter(b=>b.l>.01);
+}
+
+const fpts=Array.from({length:400},()=>({x:Math.random()*1200,y:Math.random()*800,vx:0,vy:0,h:Math.random()*360}));
+function drawFluid(){
+  ctx.fillStyle='rgba(5,5,16,.03)';ctx.fillRect(0,0,W,H);
+  const t=frame*.003;
+  fpts.forEach(p=>{
+    const nx=p.x/180,ny=p.y/180;
+    const angle=(Math.sin(nx+t)*Math.cos(ny*.5+t*.8)+Math.sin((nx+ny)*.5+t*1.2))*Math.PI*2;
+    p.vx=p.vx*.94+Math.cos(angle)*.6+(mx-p.x)*.0005;
+    p.vy=p.vy*.94+Math.sin(angle)*.6+(my-p.y)*.0005;
     p.x+=p.vx;p.y+=p.vy;
     if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
-    p.alpha+=Math.sin(Date.now()*0.001+p.x)*0.005;
-    p.alpha=Math.max(0.05,Math.min(0.9,p.alpha));
+    p.h=(p.h+.4)%360;
+    ctx.beginPath();ctx.arc(p.x,p.y,1.8,0,Math.PI*2);ctx.fillStyle=`hsla(${p.h},90%,70%,.75)`;ctx.fill();
   });
+  ctx.beginPath();ctx.arc(mx,my,6,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.9)';ctx.fill();
+  ctx.beginPath();ctx.arc(mx,my,18,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.08)';ctx.fill();
 }
 
-let burstParticlesArr=[];
-function burstParticles(){
-  const cx=W/2,cy=H/2;
-  for(let i=0;i<80;i++){
-    const angle=Math.random()*Math.PI*2,speed=Math.random()*8+2;
-    burstParticlesArr.push({x:cx,y:cy,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:1,r:Math.random()*4+2,hue:Math.random()*360});
-  }
-}
-
-function drawBurst(){
-  burstParticlesArr=burstParticlesArr.filter(p=>p.life>0.01);
-  burstParticlesArr.forEach(p=>{
-    ctx.beginPath();ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2);
-    ctx.fillStyle=`hsla(${p.hue},100%,65%,${p.life})`;ctx.fill();
-    p.x+=p.vx;p.y+=p.vy;p.vy+=0.15;p.life*=0.94;
-  });
-}
-
-let fwArr=[];
-function firework(){
-  const x=Math.random()*W*0.6+W*0.2, y=Math.random()*H*0.4+H*0.05;
-  for(let i=0;i<60;i++){
-    const angle=Math.random()*Math.PI*2,speed=Math.random()*6+1;
-    fwArr.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:1,r:Math.random()*3+1,hue:Math.random()*360,trail:[]});
-  }
-}
-function drawFireworks(){
-  fwArr=fwArr.filter(p=>p.life>0.01);
-  fwArr.forEach(p=>{
-    p.trail.push({x:p.x,y:p.y});
-    if(p.trail.length>8)p.trail.shift();
-    p.trail.forEach((t,i)=>{
-      ctx.beginPath();ctx.arc(t.x,t.y,p.r*(i/p.trail.length)*p.life,0,Math.PI*2);
-      ctx.fillStyle=`hsla(${p.hue},100%,65%,${(i/p.trail.length)*p.life*0.5})`;ctx.fill();
-    });
-    ctx.beginPath();ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2);
-    ctx.fillStyle=`hsla(${p.hue},100%,75%,${p.life})`;ctx.fill();
-    p.x+=p.vx;p.y+=p.vy;p.vy+=0.08;p.vx*=0.98;p.life*=0.96;
-  });
-}
-
-function toggleMatrix(){
-  matrixOn=!matrixOn;
-  if(matrixOn){
-    const cols=Math.floor(W/16);
-    matrixDrops=Array(cols).fill(1);
-  }
-}
-function drawMatrix(){
-  if(!matrixOn)return;
-  ctx.fillStyle='rgba(0,0,0,0.04)';ctx.fillRect(0,0,W,H);
-  ctx.fillStyle='#0f6';ctx.font='14px monospace';
-  const cols=Math.floor(W/16);
-  for(let i=0;i<cols;i++){
-    const char=String.fromCharCode(0x30A0+Math.random()*96);
-    ctx.fillStyle=`rgba(0,${Math.floor(Math.random()*100+155)},70,0.85)`;
-    ctx.fillText(char,i*16,matrixDrops[i]*16);
-    if(matrixDrops[i]*16>H&&Math.random()>0.975)matrixDrops[i]=0;
-    matrixDrops[i]++;
-  }
-}
-
-function toggleRipple(){
-  rippleOn=!rippleOn;
-}
-document.addEventListener('mousemove',e=>{
-  if(!rippleOn)return;
-  const el=document.createElement('div');
-  el.style.cssText=`position:fixed;left:${e.clientX}px;top:${e.clientY}px;width:4px;height:4px;background:rgba(14,165,233,0.9);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);animation:rippleAnim 0.8s ease-out forwards;`;
-  document.getElementById('rippleContainer').appendChild(el);
-  setTimeout(()=>el.remove(),800);
-});
-const style=document.createElement('style');
-style.textContent=`@keyframes rippleAnim{0%{width:4px;height:4px;opacity:1}100%{width:80px;height:80px;opacity:0;margin-left:-38px;margin-top:-38px}}`;
-document.head.appendChild(style);
-
-function cardPop(el){
-  el.style.transition='transform 0.1s';
-  el.style.transform='scale(1.2) rotate(5deg)';
-  setTimeout(()=>{el.style.transform='';el.style.transition='transform 0.5s cubic-bezier(.34,1.56,.64,1)';},150);
-  firework();
-}
-
-function loop(){
-  if(!matrixOn){
-    ctx.clearRect(0,0,W,H);
-    drawStars();
-  } else {
-    drawMatrix();
-  }
-  drawBurst();
-  drawFireworks();
-  requestAnimationFrame(loop);
-}
-
-resize();
+function loop(){frame++;if(mode==='hyper')drawHyper();else if(mode==='dna')drawDNA();else if(mode==='galaxy')drawGalaxy();else if(mode==='bolt')drawBolt();else if(mode==='fluid')drawFluid();requestAnimationFrame(loop)}
 loop();
 </script>
 </body>
